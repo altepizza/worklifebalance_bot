@@ -1,0 +1,16 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+sqlalchemy = "*"
+ruff = "*"
+loguru = "*"
+python-telegram-bot = {extras = ["job-queue"], version = "*"}
+dynaconf = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.12"

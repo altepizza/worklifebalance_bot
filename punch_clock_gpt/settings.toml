@@ -1,0 +1,3 @@
+database_dir = "database"
+timezone = "Europe/Berlin"
+worktime_in_hours = 9

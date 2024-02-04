@@ -1,0 +1,18 @@
+version: '3.1'
+
+services:
+
+  punch_clock:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    develop:
+      context: punch_clock_gpt
+      watch:
+        - action: rebuild
+          trigger: "./"
+    environment:
+      - DYNACONF_TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - DYNACONF_CHAT_ID_WHITELIST=${CHAT_ID_WHITELIST}
+    volumes:
+      - ./database:/app/database
