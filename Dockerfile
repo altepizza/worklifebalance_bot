@@ -1,5 +1,7 @@
 FROM python:3.12-slim
 
+LABEL org.opencontainers.image.source https://github.com/altepizza/worklifebalance_bot
+
 WORKDIR /app
 
 COPY punch_clock_gpt/*.py /app
