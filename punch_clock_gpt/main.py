@@ -17,7 +17,7 @@ def is_chat_id_allowed(chat_id: int) -> bool:
 async def alarm(context: ContextTypes.DEFAULT_TYPE) -> None:
     """Send the alarm message."""
     job = context.job
-    await context.bot.send_message(job.chat_id, text=f"Beep! {job.data} get home!")
+    await context.bot.send_message(job.chat_id, text="Go home!")
 
 
 def remove_job_if_exists(name: str, context: ContextTypes.DEFAULT_TYPE) -> bool:
@@ -44,7 +44,7 @@ async def clock_in(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         )
         supposed_clock_out = local_datetime + timedelta(seconds=due)
         await update.effective_message.reply_text(
-            f"Clocked in at {local_datetime}. You should clock out at {supposed_clock_out}."
+            f"Clocked in at {local_datetime.strftime('%Y-%m-%d %H:%M:%S')}. You should clock out at {supposed_clock_out.strftime('%H:%M:%S')}."
         )
 
 
@@ -57,7 +57,7 @@ async def clock_out(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         chat_id = update.message.chat_id
         remove_job_if_exists(str(chat_id), context)
         await update.message.reply_text(
-            f"Clocked out at {local_datetime}. You worked {worked_hours} hours. Your current time budget is {data.calculate_overtime_undertime_in_h()} hours."
+            f"Clocked out at {local_datetime}. You worked {worked_hours:.1f} hours. Your current time budget is {data.calculate_overtime_undertime_in_h()} hours."
         )
 
 
