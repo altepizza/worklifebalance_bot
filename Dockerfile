@@ -4,8 +4,6 @@ LABEL org.opencontainers.image.source https://github.com/altepizza/worklifebalan
 
 WORKDIR /app
 
-COPY punch_clock_gpt/*.py /app
-COPY punch_clock_gpt/settings.toml /app
 COPY Pipfile* /app
 
 RUN pip install pipenv
@@ -14,5 +12,8 @@ RUN pip install pipenv
 # --system flag tells pipenv to install the dependencies globally in the docker image
 # rather than in a virtualenv, which is the default behavior of pipenv
 RUN pipenv install --system --deploy
+
+COPY punch_clock_gpt/*.py /app
+COPY punch_clock_gpt/settings.toml /app
 
 CMD ["python", "main.py"]
