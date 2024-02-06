@@ -54,10 +54,11 @@ async def clock_out(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         local_datetime = update.message.date.astimezone(local_tz)
 
         worked_hours = data.clock_out(local_datetime)
+        total_hours = worked_hours.total_seconds() / 3600.0
         chat_id = update.message.chat_id
         remove_job_if_exists(str(chat_id), context)
         await update.message.reply_text(
-            f"Clocked out at {local_datetime}. You worked {worked_hours:.1f} hours. Your current time budget is {data.calculate_overtime_undertime_in_h()} hours."
+            f"Clocked out at {local_datetime}. You worked {total_hours:.1f} hours. Your current time budget is {data.calculate_overtime_undertime_in_h()} hours."
         )
 
 
