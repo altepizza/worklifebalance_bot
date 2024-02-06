@@ -17,7 +17,7 @@ def is_chat_id_allowed(chat_id: int) -> bool:
 async def alarm(context: ContextTypes.DEFAULT_TYPE) -> None:
     """Send the alarm message."""
     job = context.job
-    await context.bot.send_message(job.chat_id, text="Go home!")
+    await context.bot.send_message(job.chat_id, text="Go home! /clock_out")
 
 
 def remove_job_if_exists(name: str, context: ContextTypes.DEFAULT_TYPE) -> bool:
