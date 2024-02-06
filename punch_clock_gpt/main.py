@@ -44,7 +44,9 @@ async def clock_in(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         )
         supposed_clock_out = local_datetime + timedelta(seconds=due)
         await update.effective_message.reply_text(
-            f"Clocked in at {local_datetime.strftime('%Y-%m-%d %H:%M:%S')}. You should clock out at {supposed_clock_out.strftime('%H:%M:%S')}."
+            f"""Clocked in at {local_datetime.strftime('%Y-%m-%d %H:%M:%S')}.\n
+                You should clock out at {supposed_clock_out.strftime('%H:%M:%S')}.\n
+                Your regular work end time is {local_datetime + timedelta(seconds=settings.worktime_in_hours * 3600)} hours after clock in."""
         )
 
 
