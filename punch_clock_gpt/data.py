@@ -76,3 +76,15 @@ def calculate_overtime_undertime_in_h() -> float:
         differences.append(worked_hours - 9)
     session.close()
     return sum(differences)
+
+
+def convert_hours_into_time(hours: float) -> datetime.time:
+    minutes = hours * 60
+    hours, minutes = divmod(minutes, 60)
+    return datetime.time(int(hours), int(minutes))
+
+
+def get_formatted_time_budget() -> datetime.time:
+    return convert_hours_into_time(calculate_overtime_undertime_in_h()).strftime(
+        "%H:%M:%S"
+    )

@@ -17,7 +17,7 @@ def is_chat_id_allowed(chat_id: int) -> bool:
 async def alarm(context: ContextTypes.DEFAULT_TYPE) -> None:
     """Send the alarm message."""
     job = context.job
-    await context.bot.send_message(job.chat_id, text="Go home! /clock_out")
+    await context.bot.send_message(job.chat_id, text="Go home!\n/clock_out")
 
 
 def remove_job_if_exists(name: str, context: ContextTypes.DEFAULT_TYPE) -> bool:
@@ -45,8 +45,8 @@ async def clock_in(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         supposed_clock_out = local_datetime + timedelta(seconds=due)
         await update.effective_message.reply_text(
             f"""Clocked in at {local_datetime.strftime('%Y-%m-%d %H:%M:%S')}.\n
-                You should clock out at {supposed_clock_out.strftime('%H:%M:%S')}.\n
-                Your regular work end time is {local_datetime + timedelta(seconds=settings.worktime_in_hours * 3600)} hours after clock in."""
+            You should clock out at {supposed_clock_out.strftime('%H:%M:%S')}.\n
+            Your regular work end time is {(local_datetime + timedelta(seconds=settings.worktime_in_hours * 3600)).strftime('%H:%M:%S')} hours after clock in."""
         )
 
 
@@ -60,7 +60,7 @@ async def clock_out(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         chat_id = update.message.chat_id
         remove_job_if_exists(str(chat_id), context)
         await update.message.reply_text(
-            f"Clocked out at {local_datetime}. You worked {total_hours:.1f} hours. Your current time budget is {data.calculate_overtime_undertime_in_h()} hours."
+            f"Clocked out at {local_datetime}. You worked {total_hours:.1f} hours. Your current time budget is {data.get_formatted_time_budget()}."
         )
 
 
@@ -76,7 +76,7 @@ async def get_time_budget(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     if is_chat_id_allowed(update.effective_chat.id):
         """Send a message when the command /time_budget is issued."""
         await update.message.reply_text(
-            f"Your time budget is {data.calculate_overtime_undertime_in_h()} hours"
+            f"Your time budget is {data.get_formatted_time_budget()} hours"
         )
 
 
