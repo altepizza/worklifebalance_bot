@@ -13,7 +13,7 @@ RUN pip install pipenv
 # rather than in a virtualenv, which is the default behavior of pipenv
 RUN pipenv install --system --deploy
 
-COPY punch_clock_gpt/*.py /app
-COPY punch_clock_gpt/settings.toml /app
+COPY punch_clock/*.py /app
+COPY punch_clock/settings.toml /app
 
 CMD ["python", "main.py"]

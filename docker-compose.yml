@@ -8,7 +8,7 @@ services:
       context: .
       dockerfile: Dockerfile
     develop:
-      context: punch_clock_gpt
+      context: punch_clock
       watch:
         - action: rebuild
           trigger: "./"
