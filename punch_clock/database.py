@@ -30,6 +30,11 @@ Session = sessionmaker(bind=engine)
 
 
 def clock_in(date_time: datetime = datetime.now()):
+    """Clocks in the user at the given date_time.
+
+    Args:
+        date_time (datetime, optional): Datetime of the clock in event. Defaults to datetime.now().
+    """
     session = Session()
     new_work_time = WorkTime(clock_in=date_time)
     session.add(new_work_time)
@@ -39,6 +44,13 @@ def clock_in(date_time: datetime = datetime.now()):
 
 
 def clock_out(date_time: datetime = datetime.now()):
+    """
+    Records the clock out time for the user.
+
+    Args:
+        date_time (datetime, optional): The date and time the user clocks out.
+            Defaults to the current date and time.
+    """
     session = Session()
     # Fetch the latest clock in without a clock out recorded
     work_time = (
@@ -57,6 +69,12 @@ def clock_out(date_time: datetime = datetime.now()):
 
 
 def calculate_overtime_undertime_in_h() -> float:
+    """
+    Calculates the total overtime or undertime in hours for all completed work times.
+
+    Returns:
+        float: The total overtime or undertime in hours.
+    """
     session = Session()
     work_times = session.query(WorkTime).filter(WorkTime.clock_out.isnot(None)).all()
     differences = []
@@ -68,12 +86,30 @@ def calculate_overtime_undertime_in_h() -> float:
 
 
 def convert_hours_into_time(hours: float) -> datetime.time:
+    """
+    Converts the given hours into a datetime.time object.
+
+    Args:
+        hours (float): The number of hours.
+
+    Returns:
+        datetime.time: The corresponding time object.
+    """
     minutes = hours * 60
     hours, minutes = divmod(minutes, 60)
     return datetime.time(int(hours), int(minutes))
 
 
 def get_formatted_time_budget() -> datetime.time:
+    """
+    Returns the formatted time budget as a datetime.time object.
+
+    This function calculates the overtime/undertime in hours and converts it into a formatted time string
+    in the format "HH:MM:SS".
+
+    Returns:
+        datetime.time: The formatted time budget.
+    """
     return convert_hours_into_time(calculate_overtime_undertime_in_h()).strftime(
         "%H:%M:%S"
     )

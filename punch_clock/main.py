@@ -3,7 +3,7 @@ from datetime import timedelta
 from telegram import Update
 from telegram.ext import Application, CommandHandler, ContextTypes
 from config import settings
-import data
+import punch_clock.database as database
 from zoneinfo import ZoneInfo
 from loguru import logger
 
@@ -33,11 +33,11 @@ def remove_job_if_exists(name: str, context: ContextTypes.DEFAULT_TYPE) -> bool:
 async def clock_in(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     if is_chat_id_allowed(update.effective_chat.id):
         local_datetime = update.message.date.astimezone(local_tz)
-        data.clock_in(date_time=local_datetime)
+        database.clock_in(date_time=local_datetime)
         chat_id = update.effective_message.chat_id
         due = (
             settings.worktime_in_hours * 3600
-            - data.calculate_overtime_undertime_in_h() * 3600
+            - database.calculate_overtime_undertime_in_h() * 3600
         )
         context.job_queue.run_once(
             alarm, due, chat_id=chat_id, name=str(chat_id), data=due
@@ -55,12 +55,12 @@ async def clock_out(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     if is_chat_id_allowed(update.effective_chat.id):
         local_datetime = update.message.date.astimezone(local_tz)
 
-        worked_hours = data.clock_out(local_datetime)
+        worked_hours = database.clock_out(local_datetime)
         total_hours = worked_hours.total_seconds() / 3600.0
         chat_id = update.message.chat_id
         remove_job_if_exists(str(chat_id), context)
         await update.message.reply_text(
-            f"Clocked out at {local_datetime}. You worked {total_hours:.1f} hours. Your current time budget is {data.get_formatted_time_budget()}."
+            f"Clocked out at {local_datetime}. You worked {total_hours:.1f} hours. Your current time budget is {database.get_formatted_time_budget()}."
         )
 
 
@@ -76,7 +76,7 @@ async def get_time_budget(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     if is_chat_id_allowed(update.effective_chat.id):
         """Send a message when the command /time_budget is issued."""
         await update.message.reply_text(
-            f"Your time budget is {data.get_formatted_time_budget()} hours"
+            f"Your time budget is {database.get_formatted_time_budget()} hours"
         )
 
 
