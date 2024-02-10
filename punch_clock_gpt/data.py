@@ -26,7 +26,6 @@ if not os.path.exists(settings.database_dir):
     os.makedirs(settings.database_dir)
 engine = create_engine(f"sqlite:///{settings.database_dir}/worktimes.db")
 Base.metadata.create_all(engine)
-
 Session = sessionmaker(bind=engine)
 
 
@@ -39,7 +38,7 @@ def clock_in(date_time: datetime = datetime.now()):
     session.close()
 
 
-def clock_out(date_time: datetime = datetime.now()) -> float:
+def clock_out(date_time: datetime = datetime.now()):
     session = Session()
     # Fetch the latest clock in without a clock out recorded
     work_time = (
@@ -48,23 +47,13 @@ def clock_out(date_time: datetime = datetime.now()) -> float:
         .order_by(WorkTime.id.desc())
         .first()
     )
-    duration_hours = 0
     if work_time:
         work_time.clock_out = date_time
-        logger.debug(work_time.clock_out)
-        logger.debug(work_time.clock_in)
-        duration_hours = work_time.clock_out - work_time.clock_in.replace(
-            tzinfo=local_tz
-        )
         session.commit()
-        logger.info(
-            f"Clocked out at {work_time.clock_out}. Worked hours: {duration_hours}"
-        )
+        logger.info(f"Clocked out at {work_time.clock_out}")
     else:
         logger.warning("No ongoing work session found or already clocked out.")
-
     session.close()
-    return duration_hours
 
 
 def calculate_overtime_undertime_in_h() -> float:
