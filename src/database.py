@@ -83,33 +83,3 @@ def calculate_overtime_undertime_in_h() -> float:
         differences.append(worked_hours - 9)
     session.close()
     return sum(differences)
-
-
-def convert_hours_into_time(hours: float) -> datetime.time:
-    """
-    Converts the given hours into a datetime.time object.
-
-    Args:
-        hours (float): The number of hours.
-
-    Returns:
-        datetime.time: The corresponding time object.
-    """
-    minutes = hours * 60
-    hours, minutes = divmod(minutes, 60)
-    return datetime.time(int(hours), int(minutes))
-
-
-def get_formatted_time_budget() -> datetime.time:
-    """
-    Returns the formatted time budget as a datetime.time object.
-
-    This function calculates the overtime/undertime in hours and converts it into a formatted time string
-    in the format "HH:MM:SS".
-
-    Returns:
-        datetime.time: The formatted time budget.
-    """
-    return convert_hours_into_time(calculate_overtime_undertime_in_h()).strftime(
-        "%H:%M:%S"
-    )

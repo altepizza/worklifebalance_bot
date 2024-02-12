@@ -3,7 +3,7 @@ from datetime import timedelta
 from telegram import Update
 from telegram.ext import Application, CommandHandler, ContextTypes
 from config import settings
-import punch_clock.database as database
+import database as database
 from zoneinfo import ZoneInfo
 from loguru import logger
 
@@ -60,7 +60,7 @@ async def clock_out(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         chat_id = update.message.chat_id
         remove_job_if_exists(str(chat_id), context)
         await update.message.reply_text(
-            f"Clocked out at {local_datetime}. You worked {total_hours:.1f} hours. Your current time budget is {database.get_formatted_time_budget()}."
+            f"Clocked out at {local_datetime}. You worked {total_hours:.1f} hours. Your current time budget is {database.calculate_overtime_undertime_in_h()}."
         )
 
 
@@ -76,7 +76,7 @@ async def get_time_budget(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     if is_chat_id_allowed(update.effective_chat.id):
         """Send a message when the command /time_budget is issued."""
         await update.message.reply_text(
-            f"Your time budget is {database.get_formatted_time_budget()} hours"
+            f"Your time budget is {database.calculate_overtime_undertime_in_h()} hours"
         )
 
 
