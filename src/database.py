@@ -6,6 +6,7 @@ from loguru import logger
 from zoneinfo import ZoneInfo
 from config import settings
 import os
+import pandas as pd
 
 Base = declarative_base()
 local_tz = ZoneInfo(settings.timezone)
@@ -83,3 +84,24 @@ def calculate_overtime_undertime_in_h() -> float:
         differences.append(worked_hours - 9)
     session.close()
     return sum(differences)
+
+
+def get_all_work_times():
+    session = Session()
+    work_times = session.query(WorkTime).all()
+    session.close()
+    return work_times
+
+
+def get_work_times_as_df():
+    work_times = get_all_work_times()
+    return pd.DataFrame(
+        [
+            {
+                "id": work_time.id,
+                "clock_in": work_time.clock_in,
+                "clock_out": work_time.clock_out,
+            }
+            for work_time in work_times
+        ]
+    )

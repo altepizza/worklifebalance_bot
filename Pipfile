@@ -11,6 +11,8 @@ python-telegram-bot = {extras = ["job-queue"], version = "*"}
 dynaconf = "*"
 pytest = "*"
 requests = "*"
+pandas = "*"
+tabulate = "*"
 
 [dev-packages]
 

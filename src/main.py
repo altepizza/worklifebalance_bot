@@ -69,7 +69,7 @@ async def help(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     if is_chat_id_allowed(update.effective_chat.id):
         """Send a message when the command /help is issued."""
         await update.message.reply_text(
-            "/clock_in - Clock in\n/clock_out - Clock out\n/time_budget - Get time budget\n/help - Get help\n"
+            "/clock_in - Clock in\n/clock_out - Clock out\n/time_budget - Get time budget\n/help - Get help\n /get_entries - Get all entries\n"
         )
 
 
@@ -79,6 +79,12 @@ async def get_time_budget(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         await update.message.reply_text(
             f"Your time budget is {database.calculate_overtime_undertime_in_h()} hours"
         )
+
+
+async def get_entries(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    if is_chat_id_allowed(update.effective_chat.id):
+        df_string = "```" + database.get_work_times_as_df().to_markdown() + "```"
+        await update.message.reply_text(text=df_string, parse_mode="MarkdownV2")
 
 
 async def error_handler(update: Update, context: CallbackContext):
@@ -108,6 +114,7 @@ def main() -> None:
     application.add_handler(CommandHandler("clock_in", clock_in))
     application.add_handler(CommandHandler("clock_out", clock_out))
     application.add_handler(CommandHandler("help", help))
+    application.add_handler(CommandHandler("get_entries", get_entries))
     application.add_handler(CommandHandler("time_budget", get_time_budget))
 
     application.add_error_handler(error_handler)
