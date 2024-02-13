@@ -82,7 +82,7 @@ async def get_time_budget(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
 
 
 async def error_handler(update: Update, context: CallbackContext):
-    logger.error(msg="Exception while handling an update:", exc_info=context.error)
+    logger.error(f"Exception while handling an update: {context.error}")
 
     error_message = f"An error occurred: {context.error}"
 
