@@ -15,5 +15,6 @@ services:
     environment:
       - DYNACONF_TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
       - DYNACONF_CHAT_ID_WHITELIST=${CHAT_ID_WHITELIST}
+      - DYNACONF_UPTIME_KUMA_URL=${UPTIME_KUMA_URL}
     volumes:
       - ./database:/app/database

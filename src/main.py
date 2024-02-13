@@ -6,6 +6,8 @@ from config import settings
 import database as database
 from zoneinfo import ZoneInfo
 from loguru import logger
+from telegram.ext import CallbackContext
+import requests
 
 local_tz = ZoneInfo(settings.timezone)
 
@@ -55,12 +57,11 @@ async def clock_out(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     if is_chat_id_allowed(update.effective_chat.id):
         local_datetime = update.message.date.astimezone(local_tz)
 
-        worked_hours = database.clock_out(local_datetime)
-        total_hours = worked_hours.total_seconds() / 3600.0
+        database.clock_out(local_datetime)
         chat_id = update.message.chat_id
         remove_job_if_exists(str(chat_id), context)
         await update.message.reply_text(
-            f"Clocked out at {local_datetime}. You worked {total_hours:.1f} hours. Your current time budget is {database.calculate_overtime_undertime_in_h()}."
+            f"Clocked out at {local_datetime}. Your current time budget is {database.calculate_overtime_undertime_in_h()}."
         )
 
 
@@ -80,6 +81,23 @@ async def get_time_budget(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         )
 
 
+async def error_handler(update: Update, context: CallbackContext):
+    logger.error(msg="Exception while handling an update:", exc_info=context.error)
+
+    error_message = f"An error occurred: {context.error}"
+
+    webhook_url = settings.uptime_kuma_url
+    data = {"msg": error_message}
+    try:
+        response = requests.post(webhook_url, json=data)
+        if response.status_code == 200:
+            logger.info("Error message successfully sent to Uptime Kuma")
+        else:
+            logger.error("Failed to send error message to Uptime Kuma")
+    except Exception as e:
+        logger.error(f"Failed to notify Uptime Kuma about the error: {e}")
+
+
 def main() -> None:
     logger.info("""Run bot.""")
     logger.info(f"""Chat ID whitelist: {settings.chat_id_whitelist}""")
@@ -92,7 +110,8 @@ def main() -> None:
     application.add_handler(CommandHandler("help", help))
     application.add_handler(CommandHandler("time_budget", get_time_budget))
 
-    # Run the bot until the user presses Ctrl-C
+    application.add_error_handler(error_handler)
+
     application.run_polling(allowed_updates=Update.ALL_TYPES)
 
 

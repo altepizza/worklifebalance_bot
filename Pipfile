@@ -10,6 +10,7 @@ loguru = "*"
 python-telegram-bot = {extras = ["job-queue"], version = "*"}
 dynaconf = "*"
 pytest = "*"
+requests = "*"
 
 [dev-packages]
 
